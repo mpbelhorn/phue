@@ -1074,10 +1074,12 @@ class Bridge(object):
             return self.request('GET', '/api/' + self.username + '/groups/')
         if parameter is None:
             return self.request('GET', '/api/' + self.username + '/groups/' + str(group_id))
-        elif parameter == 'name' or parameter == 'lights':
-            return self.request('GET', '/api/' + self.username + '/groups/' + str(group_id))[parameter]
         else:
-            return self.request('GET', '/api/' + self.username + '/groups/' + str(group_id))['action'][parameter]
+            _group = self.request('GET', '/api/' + self.username + '/groups/' + str(group_id))
+            if parameter in _group.keys():
+                return _group.get(parameter)
+            else:
+                return _group.get('action', {}).get(parameter)
 
     def set_group(self, group_id, parameter, value=None, transitiontime=None):
         """ Change light settings for a group
