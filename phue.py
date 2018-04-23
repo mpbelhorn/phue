@@ -92,11 +92,10 @@ class Light(object):
 
     def __repr__(self):
         # like default python repr function, but add light name
-        return '<{0}.{1} object "{2}" at {3}>'.format(
-            self.__class__.__module__,
+        return '{0}(id="{1}", name="{2}")'.format(
             self.__class__.__name__,
-            self.name,
-            hex(id(self)))
+            self.light_id,
+            self.name)
 
     # Wrapper functions for get/set through the bridge, adding support for
     # remembering the transitiontime parameter if the user has set it
@@ -478,6 +477,13 @@ class Group(Light):
             else:
                 raise LookupError("Could not find a group by that name.")
 
+    def __repr__(self):
+        return '{0}(id="{1}", name="{2}", lights={3})'.format(
+            self.__class__.__name__,
+            self.group_id,
+            self.name,
+            [l.light_id for l in self.lights])
+
     # Wrapper functions for get/set through the bridge, adding support for
     # remembering the transitiontime parameter if the user has set it
     def _get(self, *args, **kwargs):
@@ -566,8 +572,7 @@ class Scene(object):
 
     def __repr__(self):
         # like default python repr function, but add sensor name
-        return '<{0}.{1} id="{2}" name="{3}" lights={4}>'.format(
-            self.__class__.__module__,
+        return '{0}(id="{1}" name="{2}" lights={3})'.format(
             self.__class__.__name__,
             self.scene_id,
             self.name,
