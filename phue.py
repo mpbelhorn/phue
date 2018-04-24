@@ -1142,6 +1142,25 @@ class Bridge(object):
         data = {'lights': [str(x) for x in lights], 'name': name}
         return self.request('POST', '/api/' + self.username + '/groups/', data)
 
+    def create_scene(self, name, lights=None, recycle=False, transitiontime=None):
+        """ Create a scene from current lights states.
+
+        Parameters
+        ------------
+        name : string
+            Name for this scene
+        lights : list
+            List of lights to be captured in the scene.
+
+        """
+        data = {
+            'lights': [str(x) for x in lights],
+            'name': name,
+            'recycle': recycle}
+        if transitiontime is not None:
+            data['transitiontime'] = int(transitiontime)
+        return self.request('POST', '/api/' + self.username + '/scenes/', data)
+
     def delete_group(self, group_id):
         return self.request('DELETE', '/api/' + self.username + '/groups/' + str(group_id))
 
