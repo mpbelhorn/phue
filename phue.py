@@ -1142,6 +1142,17 @@ class Bridge(object):
         data = {'lights': [str(x) for x in lights], 'name': name}
         return self.request('POST', '/api/' + self.username + '/groups/', data)
 
+    def delete_group(self, group_id):
+        return self.request('DELETE', '/api/' + self.username + '/groups/' + str(group_id))
+
+    # Scenes #####
+    @property
+    def scenes(self):
+        return [Scene(k, **v) for k, v in self.get_scene().items()]
+
+    def get_scene(self):
+        return self.request('GET', '/api/' + self.username + '/scenes')
+
     def create_scene(self, name, lights=None, recycle=False, transitiontime=None):
         """ Create a scene from current lights states.
 
@@ -1161,16 +1172,25 @@ class Bridge(object):
             data['transitiontime'] = int(transitiontime)
         return self.request('POST', '/api/' + self.username + '/scenes/', data)
 
-    def delete_group(self, group_id):
-        return self.request('DELETE', '/api/' + self.username + '/groups/' + str(group_id))
+    def set_scene(self, scene_id, name, lights=None, transitiontime=None):
+        """ Create a scene from current lights states.
 
-    # Scenes #####
-    @property
-    def scenes(self):
-        return [Scene(k, **v) for k, v in self.get_scene().items()]
+        Parameters
+        ------------
+        name : string
+            Name for this scene
+        lights : list
+            List of lights to be captured in the scene.
 
-    def get_scene(self):
-        return self.request('GET', '/api/' + self.username + '/scenes')
+        """
+        data = {
+            'lights': [str(x) for x in lights],
+            'name': name,
+            'storelightstate': True}
+        if transitiontime is not None:
+            data['transitiontime'] = int(transitiontime)
+        return self.request('PUT', '/api/' + self.username + '/scenes/' +
+                            scene_id, data)
 
     def activate_scene(self, group_id, scene_id):
         return self.request('PUT', '/api/' + self.username + '/groups/' +
